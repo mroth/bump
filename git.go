@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"regexp"
+	"time"
 
 	"gopkg.in/src-d/go-git.v4"
 )
@@ -12,6 +13,7 @@ import (
 // Errors are likely just be a simple "not in git repo" etc and should be
 // considered informational rather than fatal.
 func githubRepoDetect(path string) (owner, repo string, err error) {
+	defer timeTrack(time.Now(), "githubRepoDetect()")
 	gitRepo, err := git.PlainOpen(path)
 	if err != nil {
 		return

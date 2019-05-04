@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/Masterminds/semver"
 	"github.com/google/go-github/v25/github"
@@ -65,9 +66,7 @@ func main() {
 	// }
 
 	log.Printf("checking github for latest release of %v/%v", owner, repo) // TODO: verbose
-	client := defaultGithubClient()
-	ctx := context.Background()
-	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
+	release, err := getLatestRelease(owner, repo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -124,9 +123,22 @@ func defaultGithubClient() *github.Client {
 	return github.NewClient(nil)
 }
 
+func getLatestRelease(owner, repo string) (*github.RepositoryRelease, error) {
+	client := defaultGithubClient()
+	ctx := context.Background()
+	defer timeTrack(time.Now(), "client.Repositories.GetLatestRelease()")
+	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
+	return release, err
+}
+
 func releaseURL(owner, repo string, version semver.Version) string {
 	return fmt.Sprintf(
 		"https://github.com/%s/%s/releases/new?tag=v%s&title=v%s",
 		owner, repo, version.String(), version.String(),
 	)
+}
+
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	log.Printf("TIMING: %s took %s", name, elapsed)
 }
