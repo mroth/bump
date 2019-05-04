@@ -22,7 +22,7 @@ Patch release: https://github.com/mroth/scmpuff/releases/new?tag=v0.2.2
 - Check for GITHUB_TOKEN environment variable and use it if it exists, allowing
   for retrieving info on private repositories. (written but not tested)
 - Parse current git remote origin to determine owner and repo without
-  being specified on command line.
+  being specified on command line. √
 - Verify if need a no-emoji option for Linux users?
 - META: Automate cross-compilation and release of this tool
 - META: svg-term-cli demo

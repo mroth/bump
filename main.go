@@ -40,12 +40,23 @@ func (o cliVersionOption) String() string {
 }
 
 func main() {
+	var owner, repo string
 	if len(os.Args) < 3 {
-		// TODO: check for local .git remote
-		usage()
-		os.Exit(1)
+		log.Println("owner/repo not specified, checking for local git repo")
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err) // actually something weird going on
+		}
+		owner, repo, err = githubRepoDetect(wd)
+		if err != nil { // probably just not in a git repo
+			log.Println(err) // TODO: only verbose
+			usage()
+			os.Exit(1)
+		}
+		log.Printf("workdir detected as git repo with github remote %v/%v", owner, repo) // TODO: verbose
+	} else {
+		owner, repo = os.Args[1], os.Args[2]
 	}
-	owner, repo := os.Args[1], os.Args[2]
 
 	// if len(os.Args) >= 4 {
 	// 	switch os.Args[3] {
@@ -53,6 +64,7 @@ func main() {
 	// 	}
 	// }
 
+	log.Printf("checking github for latest release of %v/%v", owner, repo) // TODO: verbose
 	client := defaultGithubClient()
 	ctx := context.Background()
 	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
