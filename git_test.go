@@ -43,3 +43,33 @@ func Test_parseGithubRemote(t *testing.T) {
 		})
 	}
 }
+
+func Test_githubRepoDetect(t *testing.T) {
+	owner, repo, err := githubRepoDetect(".")
+	if err != nil {
+		t.Fatal(err)
+	}
+	expect := "mroth/bump"
+	actual := owner + "/" + repo
+	if expect != actual {
+		t.Errorf("want %v got %v", expect, actual)
+	}
+}
+
+func Benchmark_detectRemoteURL_GoGit(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_detectRemoteURL_GoGit(".")
+	}
+}
+
+func Benchmark_detectRemoteURL_LocalGit(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_detectRemoteURL_LocalGit(".")
+	}
+}
+
+func Benchmark_parseGithubRemote(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		parseGithubRemote("https://github.com/mroth/bump.git")
+	}
+}
