@@ -14,16 +14,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// type Options struct {
-// 	NoOpen        bool // dont auto-open the final URL in browser
-// 	NoInteractive bool // TODO: disable interactive mode? (implies --no-open)
-// 	Verbose       bool // TODO verbose mode?
-// }
-
-func usage() {
-	fmt.Fprintf(os.Stderr, "Usage: %s <owner> <repo>\n", os.Args[0])
-	// fmt.Fprintf(os.Stderr, "Usage: %s <owner> <repo> [major|minor|patch]\n", os.Args[0])
-}
+// TODO: maybe use a package scope logger var instead?
+// var (
+// 	Verbose = false
+// )
 
 type cliVersionOption struct {
 	Name    string
@@ -41,31 +35,45 @@ func (o cliVersionOption) String() string {
 }
 
 func main() {
+	opts, flags := ParseFlags(NewOptionsFromEnv(), os.Args[1:])
+	log.Printf("ParseFlags() new options: %+v", opts)
+
+	// figure out owner and repo
+	//  ...if we got it passed to us, cool cool
+	//  ...if not, call githubRepoDetect() to do our git checking magic
 	var owner, repo string
-	if len(os.Args) < 3 {
+	if len(flags.Args()) < 2 {
 		log.Println("owner/repo not specified, checking for local git repo")
 		wd, err := os.Getwd()
 		if err != nil {
 			log.Fatal(err) // actually something weird going on
 		}
 		owner, repo, err = githubRepoDetect(wd)
-		if err != nil { // probably just not in a git repo
-			log.Println(err) // TODO: only verbose
+		if err != nil {
+			// probably just not in a git repo, no biggie
+			if opts.Verbose {
+				log.Println(err)
+			}
 			usage()
 			os.Exit(1)
 		}
-		log.Printf("workdir detected as git repo with github remote %v/%v", owner, repo) // TODO: verbose
+		if opts.Verbose {
+			log.Printf("workdir detected as git repo with github remote %v/%v", owner, repo)
+		}
 	} else {
-		owner, repo = os.Args[1], os.Args[2]
+		owner, repo = flags.Arg(0), flags.Arg(1)
 	}
 
+	// TODO: deal with possible passed auto-action
 	// if len(os.Args) >= 4 {
 	// 	switch os.Args[3] {
 	// 	case ""
 	// 	}
 	// }
 
-	log.Printf("checking github for latest release of %v/%v", owner, repo) // TODO: verbose
+	if opts.Verbose {
+		log.Printf("checking github for latest release of %v/%v", owner, repo)
+	}
 	release, err := getLatestRelease(owner, repo)
 	if err != nil {
 		log.Fatal(err)
@@ -82,14 +90,14 @@ func main() {
 		release.GetPublishedAt(),
 	)
 	// promptui.IconInitial = "🚀"
-	options := []cliVersionOption{
+	choices := []cliVersionOption{
 		{"patch", version.IncPatch()},
 		{"minor", version.IncMinor()},
 		{"major", version.IncMajor()},
 	}
 	prompt := promptui.Select{
 		Label: "Select semver increment to specify new version",
-		Items: options,
+		Items: choices,
 		// Templates: &promptui.SelectTemplates{
 		// Active: `🚀 {{ . | red }}`,
 		// Help: `{{ "Use the arrow (or vim) keys to navigate: ↓ ↑ → ←" | faint }}`,
@@ -100,7 +108,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	nextVersion := options[index].Version
+	nextVersion := choices[index].Version
 	nextURL := releaseURL(owner, repo, nextVersion)
 	fmt.Println("Open sesame:", nextURL)
 	browser.OpenURL(nextURL)
