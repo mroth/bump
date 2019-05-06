@@ -16,6 +16,8 @@ origin.
 Flags:
     --no-open           Do not automatically open publish URL in browser.
     --verbose, -v       Verbose output.
+    --version           Print version and exit.
+    --help              Print help and exit.
 
 Environment:
     $BUMP_NO_OPEN       Global default for --no-open
@@ -66,23 +68,30 @@ func getBoolEnv(key string) bool {
 // from NewOptionsFromEnv() -- and parses flags contained in args into a new
 // Options and returns that along with the FlagSet which was used so one can
 // call Args on it.
+//
+// If version was requested, we just output and shortcircuit exit, since same
+// thing would happen if --help was requested as per normal FlagSet behavior.
+//
+// Note none of the usage text here actually shows up in help output since just
+// manually overriding that page for now.
 func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 	var newOpts Options
 	var flags flag.FlagSet
 
-	flags.BoolVar(&newOpts.NoOpen, "no-open", opts.NoOpen,
-		fmt.Sprintf("don't auto-open in browser [$%v]", EnvKeyNoOpen))
-
-	flags.BoolVar(&newOpts.Verbose, "verbose", opts.Verbose,
-		fmt.Sprintf("verbose output [$%v]", EnvKeyVerbose))
-
-	flags.BoolVar(&newOpts.Verbose, "v", opts.Verbose,
-		fmt.Sprintf("verbose output [$%v]", EnvKeyVerbose))
-
+	flags.BoolVar(&newOpts.NoOpen, "no-open", opts.NoOpen, "")
+	flags.BoolVar(&newOpts.Verbose, "verbose", opts.Verbose, "")
+	flags.BoolVar(&newOpts.Verbose, "v", opts.Verbose, "")
+	version := flags.Bool("version", false, "")
 	flags.Usage = usage
+
 	// explicitly swallow error to appease errcheck
 	// (FlagSet.Parse returns "ErrHelp if -help or -h were set but not defined")
 	_ = flags.Parse(args)
+	if *version {
+		fmt.Println(buildVersion)
+		os.Exit(0)
+	}
+
 	return newOpts, &flags
 }
 

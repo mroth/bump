@@ -1,0 +1,41 @@
+before:
+  hooks:
+    - go mod download
+builds:
+- env:
+    - CGO_ENABLED=0
+  goos:
+    - linux
+    - darwin
+    - windows
+  goarch:
+    - amd64
+  # Custom ldflags templates.
+  # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}`.
+  ldflags:
+     - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}
+archives:
+- replacements:
+    darwin: mac
+    amd64: x64
+  format_overrides:
+  - goos: windows
+    format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+brew:
+  github:
+    owner: mroth
+    name: homebrew-formulas
+  description: "Draft GitHub Release of the next semver in web browser"
+  homepage: "https://github.com/mroth/bump"
+  skip_upload: false
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^chore:'
+    - '^trivial:'

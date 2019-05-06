@@ -10,6 +10,13 @@ import (
 	"github.com/pkg/browser"
 )
 
+// build set by goreleaser on production builds
+var (
+	buildVersion = "dev"
+	buildCommit  = "none"
+	buildDate    = "unknown"
+)
+
 // VerboseLogging sets whether to log debug/timing info to stderr
 var VerboseLogging = false
 
@@ -27,6 +34,7 @@ func timeTrack(start time.Time, name string) {
 func main() {
 	owner, repo, opts := ParseAll()
 	VerboseLogging = opts.Verbose
+	logVerbose("BUILD INFO: %v %v %v", buildVersion, buildCommit, buildDate)
 	logVerbose("ParseAll() opts: %+v owner: %v repo: %v", opts, owner, repo)
 
 	// figure out owner and repo
