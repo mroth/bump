@@ -9,7 +9,6 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/google/go-github/v25/github"
-	"github.com/manifoldco/promptui"
 	"github.com/pkg/browser"
 	"golang.org/x/oauth2"
 )
@@ -18,21 +17,6 @@ import (
 // var (
 // 	Verbose = false
 // )
-
-type cliVersionOption struct {
-	Name    string
-	Version semver.Version
-}
-
-func (o cliVersionOption) String() string {
-	return fmt.Sprintf(
-		"%v %v",
-		o.Name,
-		promptui.Styler(promptui.FGFaint)(
-			fmt.Sprintf("(%v)", o.Version.String()),
-		),
-	)
-}
 
 func main() {
 	owner, repo, opts := ParseAll()
@@ -75,36 +59,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// try to parse tag name from current release into a semantic version
 	tag := release.GetTagName()
 	version, err := semver.NewVersion(tag)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("🌻 Current version of %v (released %v)\n",
-		promptui.Styler(promptui.FGBold)(fmt.Sprintf("%v/%v: %v", owner, repo, version)),
-		release.GetPublishedAt(),
-	)
-	// promptui.IconInitial = "🚀"
-	choices := []cliVersionOption{
-		{"patch", version.IncPatch()},
-		{"minor", version.IncMinor()},
-		{"major", version.IncMajor()},
-	}
-	prompt := promptui.Select{
-		Label: "Select semver increment to specify new version",
-		Items: choices,
-		// Templates: &promptui.SelectTemplates{
-		// Active: `🚀 {{ . | red }}`,
-		// Help: `{{ "Use the arrow (or vim) keys to navigate: ↓ ↑ → ←" | faint }}`,
-		// },
-	}
-
-	index, _, err := prompt.Run()
+	nextVersion, err := prompt(owner, repo, version, release)
 	if err != nil {
 		log.Fatal(err)
 	}
-	nextVersion := choices[index].Version
+
 	nextURL := releaseURL(owner, repo, nextVersion)
 	fmt.Println("Open sesame:", nextURL)
 	browser.OpenURL(nextURL)
@@ -135,7 +101,7 @@ func getLatestRelease(owner, repo string) (*github.RepositoryRelease, error) {
 	return release, err
 }
 
-func releaseURL(owner, repo string, version semver.Version) string {
+func releaseURL(owner, repo string, version *semver.Version) string {
 	return fmt.Sprintf(
 		"https://github.com/%s/%s/releases/new?tag=v%s&title=v%s",
 		owner, repo, version.String(), version.String(),
