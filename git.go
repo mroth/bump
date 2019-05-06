@@ -1,18 +1,54 @@
 package main
 
 import (
+	"context"
 	"errors"
+	"os"
 	"os/exec"
 	"regexp"
 	"time"
 
+	"github.com/google/go-github/v25/github"
+	"golang.org/x/oauth2"
 	"gopkg.in/src-d/go-git.v4"
 )
 
-// Returns owner, repo, error
+// getLatestRelease is a convenience function wrapping retrieval of latest
+// GitHub release for owner and repo
 //
-// Errors are likely just be a simple "not in git repo" etc and should be
-// considered informational rather than fatal.
+// It will automatically use an OAuth scoped token if GITHUB_RELEASE environment
+// variable is set, or an unauthed client otherwise.
+func getLatestRelease(owner, repo string) (*github.RepositoryRelease, error) {
+	client := defaultGithubClient()
+	ctx := context.Background()
+	defer timeTrack(time.Now(), "client.Repositories.GetLatestRelease()")
+	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
+	return release, err
+}
+
+// defaultGithubClient returns a OAuth scoped Github API Client if GITHUB_TOKEN
+// is set the local environment, or an unauthorized one otherwise.
+//
+// TODO: actually test me :-)
+func defaultGithubClient() *github.Client {
+	token, ok := os.LookupEnv("GITHUB_TOKEN")
+	if ok {
+		ctx := context.Background()
+		ts := oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: token},
+		)
+		tc := oauth2.NewClient(ctx, ts)
+		return github.NewClient(tc)
+	}
+	return github.NewClient(nil)
+}
+
+// githubRepoDetect attempts to detect whether a given path is part of a git
+// repository that has a GitHub remote as the origin, and if so, returns the
+// owner and repo name.
+//
+// Errors returned are likely just be a simple "not in git repo" etc and should
+// be considered informational rather than fatal.
 func githubRepoDetect(path string) (owner, repo string, err error) {
 	defer timeTrack(time.Now(), "githubRepoDetect()")
 	remoteURL, err := _detectRemoteURL_GoGit(path)
@@ -27,7 +63,8 @@ func githubRepoDetect(path string) (owner, repo string, err error) {
 	return
 }
 
-// implementation using go-git
+// detectRemoteURL implementation using go-git
+//
 // will work even if git is not installed on users machine
 // one more dependency to track and keep up to date
 //
@@ -45,8 +82,9 @@ func _detectRemoteURL_GoGit(path string) (string, error) {
 	return remote.Config().URLs[0], nil
 }
 
-// implementation shelling out to local copy of git
-// requires
+// detectRemoteURL implementation shelling out to local copy of git
+//
+// requires git to be installed on machine
 // uses os/exec from standard library, does not add a dependency
 //
 // os/exec adds 242KB to macOS binary size

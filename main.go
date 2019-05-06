@@ -1,16 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/Masterminds/semver"
-	"github.com/google/go-github/v25/github"
 	"github.com/pkg/browser"
-	"golang.org/x/oauth2"
 )
 
 // VerboseLogging sets whether to log debug/timing info to stderr
@@ -74,31 +71,6 @@ func main() {
 	nextURL := releaseURL(owner, repo, nextVersion)
 	fmt.Println("Open sesame:", nextURL)
 	browser.OpenURL(nextURL)
-}
-
-// defaultGithubClient returns a OAuth scoped Github API Client if GITHUB_TOKEN
-// is set the local environment, or an unauthorized one otherwise.
-//
-// TODO: actually test me :-)
-func defaultGithubClient() *github.Client {
-	token, ok := os.LookupEnv("GITHUB_TOKEN")
-	if ok {
-		ctx := context.Background()
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: token},
-		)
-		tc := oauth2.NewClient(ctx, ts)
-		return github.NewClient(tc)
-	}
-	return github.NewClient(nil)
-}
-
-func getLatestRelease(owner, repo string) (*github.RepositoryRelease, error) {
-	client := defaultGithubClient()
-	ctx := context.Background()
-	defer timeTrack(time.Now(), "client.Repositories.GetLatestRelease()")
-	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
-	return release, err
 }
 
 func releaseURL(owner, repo string, version *semver.Version) string {
