@@ -80,7 +80,9 @@ func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 		fmt.Sprintf("verbose output [$%v]", EnvKeyVerbose))
 
 	flags.Usage = usage
-	flags.Parse(args)
+	// explicitly swallow error to appease errcheck
+	// (FlagSet.Parse returns "ErrHelp if -help or -h were set but not defined")
+	_ = flags.Parse(args)
 	return newOpts, &flags
 }
 
