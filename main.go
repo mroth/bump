@@ -69,8 +69,15 @@ func main() {
 	}
 
 	nextURL := releaseURL(owner, repo, nextVersion)
-	fmt.Println("Open sesame:", nextURL)
-	browser.OpenURL(nextURL)
+	if opts.NoOpen {
+		fmt.Println("To draft release:", nextURL)
+	} else {
+		fmt.Println("Open sesame:", nextURL)
+		err = browser.OpenURL(nextURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func releaseURL(owner, repo string, version *semver.Version) string {
