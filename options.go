@@ -7,8 +7,7 @@ import (
 	"strings"
 )
 
-const tmpusage = `
-Usage: bump <owner> <repo>
+const tmpusage = `Usage: bump <owner> <repo>
 
 If you are in a git repository that has been cloned from GitHub, owner and
 repo args can be omitted, in which case they will be inferred from the remote
@@ -25,6 +24,7 @@ Environment:
 
 func usage() {
 	fmt.Fprintf(os.Stderr, tmpusage)
+	os.Exit(1)
 }
 
 // Options defines all optional settings understood by the program.

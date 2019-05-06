@@ -61,7 +61,6 @@ func main() {
 				log.Println(err)
 			}
 			usage()
-			os.Exit(1)
 		}
 		if opts.Verbose {
 			log.Printf("workdir detected as git repo with github remote %v/%v", owner, repo)
