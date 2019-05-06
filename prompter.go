@@ -23,25 +23,26 @@ func (o cliVersionOption) String() string {
 	)
 }
 
-func prompt(owner, repo string, currVersion *semver.Version, release *github.RepositoryRelease) (*semver.Version, error) {
+func prompt(
+	owner, repo string, currVersion *semver.Version,
+	release *github.RepositoryRelease) (*semver.Version, error) {
+
 	fmt.Printf("🌻 Current version of %v (released %v)\n",
 		promptui.Styler(promptui.FGBold)(fmt.Sprintf("%v/%v: %v",
 			owner, repo, currVersion)),
 		release.GetPublishedAt(),
 	)
-	// promptui.IconInitial = "🚀"
+
+	// promptui.IconInitial = "🚀" // default is colored ASCII question mark
 	choices := []cliVersionOption{
 		{"patch", currVersion.IncPatch()},
 		{"minor", currVersion.IncMinor()},
 		{"major", currVersion.IncMajor()},
 	}
+
 	prompt := promptui.Select{
 		Label: "Select semver increment to specify new version",
 		Items: choices,
-		// Templates: &promptui.SelectTemplates{
-		// Active: `🚀 {{ . | red }}`,
-		// Help: `{{ "Use the arrow (or vim) keys to navigate: ↓ ↑ → ←" | faint }}`,
-		// },
 	}
 
 	index, _, err := prompt.Run()

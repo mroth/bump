@@ -47,9 +47,10 @@ func main() {
 			logVerbose("%v", err)
 			usage()
 		}
-		logVerbose("workdir detected as git repo with github remote %v/%v", owner, repo)
+		logVerbose("wd detected as git repo with github remote %v/%v", owner, repo)
 	}
 
+	// get latest release version from github
 	logVerbose("checking github for latest release of %v/%v", owner, repo)
 	release, err := getLatestRelease(owner, repo)
 	if err != nil {
@@ -63,11 +64,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// invoke interactive prompt UI helping user select next version
 	nextVersion, err := prompt(owner, repo, version, release)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// create draft URL for next version, send user to visit it
 	nextURL := releaseURL(owner, repo, nextVersion)
 	if opts.NoOpen {
 		fmt.Println("To draft release:", nextURL)

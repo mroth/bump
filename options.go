@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const tmpusage = `Usage: bump <owner> <repo>
+const usageText = `Usage: bump <owner> <repo>
 
 If you are in a git repository that has been cloned from GitHub, owner and
 repo args can be omitted, in which case they will be inferred from the remote
@@ -23,7 +23,7 @@ Environment:
 `
 
 func usage() {
-	fmt.Fprintf(os.Stderr, tmpusage)
+	fmt.Fprintf(os.Stderr, usageText)
 	os.Exit(1)
 }
 
@@ -84,6 +84,7 @@ func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 	return newOpts, &flags
 }
 
+// ParseAll rolls up all CLI option parsing curently needed for main()
 func ParseAll() (owner, repo string, opts Options) {
 	opts, flags := ParseFlags(NewOptionsFromEnv(), os.Args[1:])
 	owner = flags.Arg(0)
