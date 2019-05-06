@@ -13,24 +13,30 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// TODO: maybe use a package scope logger var instead?
-// var (
-// 	Verbose = false
-// )
+// VerboseLogging sets whether to log debug/timing info to stderr
+var VerboseLogging = false
+
+func logVerbose(format string, v ...interface{}) {
+	if VerboseLogging {
+		log.Printf(format, v...)
+	}
+}
+
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	logVerbose("TIMING: %s took %s", name, elapsed)
+}
 
 func main() {
 	owner, repo, opts := ParseAll()
-	if opts.Verbose {
-		log.Printf("ParseAll() opts: %+v owner: %v repo: %v", opts, owner, repo)
-	}
+	VerboseLogging = opts.Verbose
+	logVerbose("ParseAll() opts: %+v owner: %v repo: %v", opts, owner, repo)
 
 	// figure out owner and repo
 	//  ...if we got it passed to us already, cool cool
 	//  ...if not, call githubRepoDetect() to do our git checking magic
 	if owner == "" || repo == "" {
-		if opts.Verbose {
-			log.Println("owner/repo not specified, checking for local git repo")
-		}
+		logVerbose("owner/repo not specified, checking for local git repo")
 		wd, err := os.Getwd()
 		if err != nil {
 			// couldn't get working directory, something really weird going on
@@ -41,19 +47,13 @@ func main() {
 		if err != nil {
 			// probably just not in a git repo, no biggie
 			// just log what happened in verbose mode, and show usage
-			if opts.Verbose {
-				log.Println(err)
-			}
+			logVerbose("%v", err)
 			usage()
 		}
-		if opts.Verbose {
-			log.Printf("workdir detected as git repo with github remote %v/%v", owner, repo)
-		}
+		logVerbose("workdir detected as git repo with github remote %v/%v", owner, repo)
 	}
 
-	if opts.Verbose {
-		log.Printf("checking github for latest release of %v/%v", owner, repo)
-	}
+	logVerbose("checking github for latest release of %v/%v", owner, repo)
 	release, err := getLatestRelease(owner, repo)
 	if err != nil {
 		log.Fatal(err)
@@ -106,9 +106,4 @@ func releaseURL(owner, repo string, version *semver.Version) string {
 		"https://github.com/%s/%s/releases/new?tag=v%s&title=v%s",
 		owner, repo, version.String(), version.String(),
 	)
-}
-
-func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	log.Printf("TIMING: %s took %s", name, elapsed)
 }
