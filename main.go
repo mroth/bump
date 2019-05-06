@@ -35,22 +35,28 @@ func (o cliVersionOption) String() string {
 }
 
 func main() {
-	opts, flags := ParseFlags(NewOptionsFromEnv(), os.Args[1:])
-	log.Printf("ParseFlags() new options: %+v", opts)
+	owner, repo, opts := ParseAll()
+	if opts.Verbose {
+		log.Printf("ParseAll() opts: %+v owner: %v repo: %v", opts, owner, repo)
+	}
 
 	// figure out owner and repo
-	//  ...if we got it passed to us, cool cool
+	//  ...if we got it passed to us already, cool cool
 	//  ...if not, call githubRepoDetect() to do our git checking magic
-	var owner, repo string
-	if len(flags.Args()) < 2 {
-		log.Println("owner/repo not specified, checking for local git repo")
+	if owner == "" || repo == "" {
+		if opts.Verbose {
+			log.Println("owner/repo not specified, checking for local git repo")
+		}
 		wd, err := os.Getwd()
 		if err != nil {
-			log.Fatal(err) // actually something weird going on
+			// couldn't get working directory, something really weird going on
+			// we should just fatal in this case
+			log.Fatal(err)
 		}
 		owner, repo, err = githubRepoDetect(wd)
 		if err != nil {
 			// probably just not in a git repo, no biggie
+			// just log what happened in verbose mode, and show usage
 			if opts.Verbose {
 				log.Println(err)
 			}
@@ -60,16 +66,7 @@ func main() {
 		if opts.Verbose {
 			log.Printf("workdir detected as git repo with github remote %v/%v", owner, repo)
 		}
-	} else {
-		owner, repo = flags.Arg(0), flags.Arg(1)
 	}
-
-	// TODO: deal with possible passed auto-action
-	// if len(os.Args) >= 4 {
-	// 	switch os.Args[3] {
-	// 	case ""
-	// 	}
-	// }
 
 	if opts.Verbose {
 		log.Printf("checking github for latest release of %v/%v", owner, repo)

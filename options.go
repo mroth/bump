@@ -8,7 +8,7 @@ import (
 )
 
 const tmpusage = `
-Usage: bump <owner> <repo> [major|minor|patch|interactive*]
+Usage: bump <owner> <repo>
 
 If you are in a git repository that has been cloned from GitHub, owner and
 repo args can be omitted, in which case they will be inferred from the remote
@@ -83,3 +83,21 @@ func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 	flags.Parse(args)
 	return newOpts, &flags
 }
+
+func ParseAll() (owner, repo string, opts Options) {
+	opts, flags := ParseFlags(NewOptionsFromEnv(), os.Args[1:])
+	owner = flags.Arg(0)
+	repo = flags.Arg(1)
+	return
+}
+
+// For future possible expansion...
+// Usage: bump <owner> <repo> [major|minor|patch|interactive*]
+// type Strategy int
+
+// const (
+// 	Patch Strategy = iota
+// 	Minor
+// 	Major
+// 	Interactive
+// )
