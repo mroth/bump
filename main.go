@@ -83,7 +83,7 @@ func main() {
 	if opts.NoOpen {
 		fmt.Println("To draft release:", nextURL)
 	} else {
-		fmt.Println("Open sesame:", nextURL)
+		fmt.Println("✨ Opening", nextURL)
 		err = browser.OpenURL(nextURL)
 		if err != nil {
 			log.Fatal(err)
