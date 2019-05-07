@@ -32,7 +32,7 @@ func prompt(
 	fmt.Printf("🌻 Current version of %v (released %v)\n",
 		promptui.Styler(promptui.FGBold)(fmt.Sprintf("%v/%v: %v",
 			owner, repo, currVersion)),
-		release.GetPublishedAt(),
+		release.GetPublishedAt().Format("2006 Jan 2"),
 	)
 
 	// promptui.IconInitial = "🚀" // default is colored ASCII question mark
