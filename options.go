@@ -22,6 +22,7 @@ Flags:
 Environment:
     $BUMP_NO_OPEN       Global default for --no-open
     $BUMP_VERBOSE       Global default for --verbose
+    $GITHUB_TOKEN       Optional, will use if present to access private repos
 `
 
 func usage() {
