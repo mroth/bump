@@ -37,12 +37,12 @@ Doing this:
 
 ![animation](docs/demo.svg)
 
-Automatically opens this in your browser:
+:arrow_right: Automatically opens this in your browser:
 
 ![release-page-ss](docs/release-draft.png)
 
 Afterwards you have a local checkout of the repository, you may wish to do `git 
-fetch` to pull all remote tags to your system.
+fetch` to pull all remote tags to your system. :eyes:
 
 # Comparison
 
