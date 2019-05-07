@@ -15,10 +15,10 @@ type cliVersionOption struct {
 
 func (o cliVersionOption) String() string {
 	return fmt.Sprintf(
-		"%v %v",
+		"%v%v",
 		o.Name,
 		promptui.Styler(promptui.FGFaint)(
-			fmt.Sprintf("(%v)", o.Version.String()),
+			fmt.Sprintf(" (%v)", o.Version.String()),
 		),
 	)
 }
