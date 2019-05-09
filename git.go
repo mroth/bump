@@ -19,11 +19,23 @@ import (
 // It will automatically use an OAuth scoped token if GITHUB_RELEASE environment
 // variable is set, or an unauthed client otherwise.
 func getLatestRelease(owner, repo string) (*github.RepositoryRelease, error) {
-	client := defaultGithubClient()
-	ctx := context.Background()
+	client, ctx := defaultGithubClient(), context.Background()
 	defer timeTrack(time.Now(), "client.Repositories.GetLatestRelease()")
 	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
 	return release, err
+}
+
+// compareRelease is a convenience function wrapping retrieval of a commits
+// comparison between current default branch HEAD and a given release tagName,
+// via the GitHub API.
+//
+// It will automatically use an OAuth scoped token if GITHUB_RELEASE environment
+// variable is set, or an unauthed client otherwise.
+func compareRelease(owner, repo, tagName string) (*github.CommitsComparison, error) {
+	client, ctx := defaultGithubClient(), context.Background()
+	defer timeTrack(time.Now(), "client.Repositories.CompareCommits()")
+	cc, _, err := client.Repositories.CompareCommits(ctx, owner, repo, tagName, "HEAD")
+	return cc, err
 }
 
 // defaultGithubClient returns a OAuth scoped Github API Client if GITHUB_TOKEN
