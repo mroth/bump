@@ -70,20 +70,21 @@ animated GIFs in, and whatnot.)
 This may not be the correct workflow for your project! In particular, it really
 works best in environments where there is not a version number file that stored
 in version control itself (Node NPM, Rust Cargo), but rather those where the git
-tags themselves manage the versioning (Go modules libraries, sbt-git, etc.)
+tags themselves manage the versioning (Go modules, sbt-git, etc.)
 
 Some related tools I found in looking at this you may wish to consider as
-alternatives.
+alternatives:
 
 - [sindresorhus/np] For NPM projects, this is really good. We've adopted it for
   all our JS native projects at @openlawteam, in conjunction with
   `--no-publish`.
-- [goreleaser] For Go projects, this tool is super good. In fact, it works well
-  in partnership with `bump`, the two tools can be complimentary for certain
-  workflows (and I use goreleaser to package bump itself!).
-- [zeit/release] Very close to what we wanted, but it does the tag/commit
-  locally and pushes to GitHub before drafting the release, and requires API
-  authorization to draft the release message.
+- [goreleaser] For Go projects, this tool is quite nice. In fact, it works well
+  in partnership with bump: let bump manage your releases and changelog, and but
+  goreleaser running in CI to build and add the binaries to the release. (See
+  the configuration for this project.)
+- [zeit/release] Fairly close to what we wanted, but it does a git tag/commit
+  and pushes to GitHub before drafting the release, and requires API
+  authorization. Javascript based.
 
 [sindresorhus/np]: https://github.com/sindresorhus/np
 [goreleaser]: https://goreleaser.com
