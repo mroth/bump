@@ -1,15 +1,18 @@
 # bump :sunflower:
 
-Simple, cross-platform CLI tool to help draft a GitHub Release of the next
-semantic version of your repo.
+Simple, cross-platform CLI tool to help draft a [GitHub Release] for the next
+[semantic version] of your project.
 
 - Zero runtime dependencies (not even git).
 - Auto-detects current repo if in cloned repository.
-- Can work without any API authorization.
+- Can work without any API authorization at all.
 
-This is intentionally designed to work with the GitHub web UI for drafting
-releases, and does not even require you to have the source code checked out
-locally.
+This is intentionally designed to work with the GitHub web site interface for
+drafting releases, and does not even require you to have the source code checked
+out locally.
+
+[GitHub Release]: https://help.github.com/en/articles/about-releases
+[semantic version]: https://semver.org
 
 ## Usage
 
@@ -44,7 +47,7 @@ Doing this:
 Afterwards you have a local checkout of the repository, you may wish to do `git
 fetch` to pull all remote tags to your system. :eyes:
 
-# Installation
+## Installation
 
 :warning:
 <small>
@@ -53,11 +56,11 @@ better ideas for the name btw?)_
 </small>
 
 Download from the [Releases page](https://github.com/mroth/bump/releases) and
-put somewhere in your `$PATH.`
+put somewhere in your `$PATH`.
 
 macOS Homebrew users can `brew install mroth/formulas/bump`.
 
-# Comparison
+## Comparison
 
 Unlike many of these release tools, bump is currently intended to support
 workflows where rather than pushing tags locally, new releases are primarily
@@ -86,10 +89,12 @@ alternatives.
 [goreleaser]: https://goreleaser.com
 [zeit/release]: https://github.com/zeit/release
 
-# TODO
+## TODOs
 
-- Check for GITHUB_TOKEN environment variable and use it if it exists, allowing
-  for retrieving info on private repositories. (written but not tested)
+- Check for `GITHUB_TOKEN` environment variable and use it if it exists,
+  allowing for retrieving info on private repositories. (written, should work,
+  but not tested yet.)
 - Verify if need a no-emoji option for Linux users?
+- Automatic changelog generation (in progress)
 - Possibly add support for semver pre-release increments? Maybe standardize node
   style via examples on https://github.com/rtsao/npm-publish-prerelease
