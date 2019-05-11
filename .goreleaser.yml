@@ -32,10 +32,6 @@ brew:
   description: "Draft GitHub Release of the next semver in web browser"
   homepage: "https://github.com/mroth/bump"
   skip_upload: false
+# disable changelog generation entirely, since bump will manage that itself!
 changelog:
-  sort: asc
-  filters:
-    exclude:
-    - '^docs:'
-    - '^chore:'
-    - '^trivial:'
+  skip: true

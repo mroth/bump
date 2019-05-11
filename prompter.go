@@ -6,8 +6,12 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/chzyer/readline"
-	"github.com/google/go-github/v25/github"
 	"github.com/manifoldco/promptui"
+)
+
+var (
+	boldStyler  = promptui.Styler(promptui.FGBold)
+	faintStyler = promptui.Styler(promptui.FGFaint)
 )
 
 type cliVersionOption struct {
@@ -16,25 +20,12 @@ type cliVersionOption struct {
 }
 
 func (o cliVersionOption) String() string {
-	return fmt.Sprintf(
-		"%v%v",
-		o.Name,
-		promptui.Styler(promptui.FGFaint)(
-			fmt.Sprintf(" (%v)", o.Version.String()),
-		),
+	return fmt.Sprintf("%v%v",
+		o.Name, faintStyler(fmt.Sprintf(" (%v)", o.Version.String())),
 	)
 }
 
-func prompt(
-	owner, repo string, currVersion *semver.Version,
-	release *github.RepositoryRelease) (*semver.Version, error) {
-
-	fmt.Printf("🌻 Current version of %v (released %v)\n",
-		promptui.Styler(promptui.FGBold)(fmt.Sprintf("%v/%v: %v",
-			owner, repo, currVersion)),
-		release.GetPublishedAt().Format("2006 Jan 2"),
-	)
-
+func prompt(currVersion *semver.Version) (*semver.Version, error) {
 	// promptui.IconInitial = "🚀" // default is colored ASCII question mark
 	choices := []cliVersionOption{
 		{"patch", currVersion.IncPatch()},
@@ -43,7 +34,7 @@ func prompt(
 	}
 
 	prompt := promptui.Select{
-		Label: "Select semver increment to specify new version",
+		Label: "Select semver increment to specify next version",
 		Items: choices,
 	}
 
