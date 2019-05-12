@@ -15,8 +15,9 @@ var (
 )
 
 type cliVersionOption struct {
-	Name    string
-	Version semver.Version
+	Name        string
+	Version     semver.Version
+	Description string
 }
 
 func (o cliVersionOption) String() string {
@@ -28,14 +29,17 @@ func (o cliVersionOption) String() string {
 func prompt(currVersion *semver.Version) (*semver.Version, error) {
 	// promptui.IconInitial = "🚀" // default is colored ASCII question mark
 	choices := []cliVersionOption{
-		{"patch", currVersion.IncPatch()},
-		{"minor", currVersion.IncMinor()},
-		{"major", currVersion.IncMajor()},
+		{"patch", currVersion.IncPatch(), "when you make backwards-compatible bug fixes."},
+		{"minor", currVersion.IncMinor(), "when you add functionality in a backwards-compatible manner."},
+		{"major", currVersion.IncMajor(), "when you make incompatible API changes."},
 	}
 
 	prompt := promptui.Select{
 		Label: "Select semver increment to specify next version",
 		Items: choices,
+		Templates: &promptui.SelectTemplates{
+			Details: `{{ .Name }}: {{ .Description }}`,
+		},
 	}
 
 	index, _, err := prompt.Run()
