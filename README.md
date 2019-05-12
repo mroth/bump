@@ -44,16 +44,12 @@ Doing this:
 
 ![release-page-ss](docs/release-draft.png)
 
-Afterwards you have a local checkout of the repository, you may wish to do `git
+Where you can edit your release notes before clicking **Publish Release**.
+
+Afterwards, if you have a local checkout of the repository, you may wish to do `git
 fetch` to pull all remote tags to your system. :eyes:
 
 ## Installation
-
-:warning:
-<small>
-_Pre-release software! API or even the package name might change (Any
-better ideas for the name btw?)_
-</small>
 
 Download from the [Releases page](https://github.com/mroth/bump/releases) and
 put somewhere in your `$PATH`.
