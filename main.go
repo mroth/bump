@@ -53,6 +53,7 @@ func main() {
 			log.Fatal(err)
 		}
 		owner, repo, err = githubRepoDetect(wd)
+		// TODO: possibly warn if have commits ahead of remote locally?
 		if err != nil {
 			// probably just not in a git repo, no biggie
 			// just log what happened in verbose mode, and show usage
