@@ -88,10 +88,6 @@ alternatives:
 
 ## TODOs
 
-- Check for `GITHUB_TOKEN` environment variable and use it if it exists,
-  allowing for retrieving info on private repositories. (written, should work,
-  but not tested yet.)
 - Verify if need a no-emoji option for Linux users?
-- Automatic changelog generation (in progress)
 - Possibly add support for semver pre-release increments? Maybe standardize node
   style via examples on https://github.com/rtsao/npm-publish-prerelease

@@ -60,8 +60,6 @@ func reverseCommitOrder(cc *github.CommitsComparison) {
 
 // defaultGithubClient returns a OAuth scoped Github API Client if GITHUB_TOKEN
 // is set the local environment, or an unauthorized one otherwise.
-//
-// TODO: actually test me :-)
 func defaultGithubClient() *github.Client {
 	token, ok := os.LookupEnv("GITHUB_TOKEN")
 	if ok {
