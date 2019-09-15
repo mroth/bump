@@ -3,9 +3,6 @@ package main
 import "testing"
 
 func Test_parseGithubRemote(t *testing.T) {
-	type args struct {
-		remoteURL string
-	}
 	tests := []struct {
 		name      string
 		remoteURL string
