@@ -21,6 +21,13 @@ func Test_parseGithubRemote(t *testing.T) {
 			wantOk:    true,
 		},
 		{
+			name:      "GitHub_HTTPS_noExtension",
+			remoteURL: "https://github.com/mroth/bump",
+			wantOwner: "mroth",
+			wantRepo:  "bump",
+			wantOk:    true,
+		},
+		{
 			name:      "GitHub_SSH",
 			remoteURL: "git@github.com:mroth/bump.git",
 			wantOwner: "mroth",
