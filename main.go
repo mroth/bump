@@ -132,7 +132,7 @@ func draftReleaseURL(owner, repo string, version *semver.Version, body string) s
 // screen to the user, abbreviated to try to not overflow a 80x24 terminal.
 //
 // Because of this, we only display the 10 most recent commits, with a
-// comparison URL targetting HEAD (as draft is not released), so user can view
+// comparison URL targeting HEAD (as draft is not released), so user can view
 // the full list on GitHub if desired.
 func screenChangelog(comparison *github.CommitsComparison) string {
 	var buf bytes.Buffer
