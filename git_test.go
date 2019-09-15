@@ -33,6 +33,7 @@ func Test_parseGithubRemote(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt // pin to avoid scope issues (see scopelint)
 		t.Run(tt.name, func(t *testing.T) {
 			gotOwner, gotRepo, gotOk := parseGithubRemote(tt.remoteURL)
 			if gotOwner != tt.wantOwner {
