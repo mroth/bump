@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
@@ -118,14 +119,15 @@ func _detectRemoteURL_GoGit(path string) (string, error) {
 // uses os/exec from standard library, does not add a dependency
 //
 // os/exec adds 242KB to macOS binary size
-// benchmarks at 4.2 ms/op
+// bytes adds 218kb
+// benchmarks at 5.1 ms/op
 func _detectRemoteURL_LocalGit(path string) (string, error) {
 	cmd := exec.Command("git", "config", "--get", "remote.origin.url")
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
-	return string(output), nil
+	return string(bytes.TrimSpace(output)), nil
 }
 
 // parseGithubRemote parses string remoteURL against known patterns matching
@@ -136,7 +138,7 @@ func _detectRemoteURL_LocalGit(path string) (string, error) {
 // 	 https://github.com/mroth/bump.git
 //   git@github.com:mroth/bump.git
 func parseGithubRemote(remoteURL string) (owner, repo string, ok bool) {
-	re := regexp.MustCompile(`^(?:https://|git@)github.com[:/](.*)/(.*)\.git`)
+	re := regexp.MustCompile(`^(?:https://|git@)github.com[:/](.*)/(.*?)(?:\.git$|$)`)
 	matches := re.FindStringSubmatch(remoteURL)
 	if matches == nil || len(matches) < 3 {
 		return
