@@ -88,7 +88,7 @@ func githubRepoDetect(path string) (owner, repo string, err error) {
 	}
 	owner, repo, ok := parseGithubRemote(remoteURL)
 	if !ok {
-		err = errors.New("non-matching remote url")
+		err = errors.New("cannot pattern match remote url: " + remoteURL)
 	}
 	return
 }
