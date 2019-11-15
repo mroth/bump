@@ -3,7 +3,7 @@ module github.com/mroth/bump
 go 1.13
 
 require (
-	github.com/Masterminds/semver/v3 v3.0.1
+	github.com/Masterminds/semver/v3 v3.0.2
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 	github.com/google/go-github/v25 v25.1.3
 	github.com/manifoldco/promptui v0.3.2
