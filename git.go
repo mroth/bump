@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/google/go-github/v25/github"
+	"github.com/google/go-github/v28/github"
 	"golang.org/x/oauth2"
 	"gopkg.in/src-d/go-git.v4"
 )
