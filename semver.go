@@ -13,6 +13,34 @@ var (
 	ErrInvalidPrerelease = errors.New("Prelease string did not conform to supported format")
 )
 
+// Version wraps "Masterminds/semver/v3".Version in order to provide some
+// rudimentary support for bumping pre-release versions that follow a specific
+// pattern.
+// type Version struct {
+// 	semver.Version
+// }
+
+// IsPrerelease returns whether or not a version has a prerelease version
+// component.
+// func (v Version) IsPrerelease() bool {
+// 	return v.Prerelease() != ""
+// }
+
+// func (v Version) IncPrerelease() (Version, error) {
+// 	if !v.IsPrerelease() {
+// 		return v, ErrNotPrerelease
+// 	}
+
+// 	prefix, counter, err := parsePreStr(v.Prerelease())
+// 	if err != nil {
+// 		return v, err
+// 	}
+// 	counter++
+// 	newPreS := prefix + strconv.Itoa(int(counter))
+// 	vNext, err := v.SetPrerelease(newPreS)
+// 	return Version{vNext}, err
+// }
+
 var rePre = regexp.MustCompile(`(.*?)(\d+)$`)
 
 func parsePreStr(pre string) (prefix string, counter uint, err error) {

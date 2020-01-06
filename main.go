@@ -63,6 +63,13 @@ func main() {
 		logVerbose("detected .git repo with github remote %v/%v", owner, repo)
 	}
 
+	// TEMP: get all releases from GH
+	logVerbose("checking github for latest releases of %v/%v", owner, repo)
+	_, err := getRecentReleases(owner, repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// get latest release version from github
 	logVerbose("checking github for latest release of %v/%v", owner, repo)
 	previousRelease, err := getLatestRelease(owner, repo)

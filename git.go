@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -13,6 +14,25 @@ import (
 	"golang.org/x/oauth2"
 	"gopkg.in/src-d/go-git.v4"
 )
+
+type recentReleases struct {
+	full *github.RepositoryRelease
+	pre  *github.RepositoryRelease
+}
+
+func getRecentReleases(owner, repo string) (recentReleases, error) {
+	client, ctx := defaultGithubClient(), context.Background()
+	defer timeTrack(time.Now(), "client.Repositories.ListReleases()")
+	opts := &github.ListOptions{}
+	releases, _, err := client.Repositories.ListReleases(ctx, owner, repo, opts)
+
+	rr := recentReleases{}
+	for _, r := range releases {
+		fmt.Println(r.GetTagName())
+	}
+
+	return rr, err
+}
 
 // getLatestRelease is a convenience function wrapping retrieval of latest
 // GitHub release for owner and repo
