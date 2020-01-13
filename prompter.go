@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/chzyer/readline"
 	"github.com/manifoldco/promptui"
 )
 
@@ -40,6 +39,7 @@ func prompt(currVersion *semver.Version) (*semver.Version, error) {
 		Templates: &promptui.SelectTemplates{
 			Details: `{{ .Name }}: {{ .Description }}`,
 		},
+		Stdout: &bellSkipper{},
 	}
 
 	index, _, err := prompt.Run()
@@ -50,28 +50,26 @@ func prompt(currVersion *semver.Version) (*semver.Version, error) {
 	return &nextVersion, nil
 }
 
-// below is all boilerplate copy and pasted to workaround bell issue documented
-// in https://github.com/manifoldco/promptui/issues/49. :-(
-
-// stderr implements an io.WriteCloser that skips the terminal bell character
-// (ASCII code 7), and writes the rest to os.Stderr. It's used to replace
-// readline.Stdout, that is the package used by promptui to display the prompts.
-type stderr struct{}
+// bellSkipper implements an io.WriteCloser that skips the terminal bell
+// character (ASCII code 7), and writes the rest to os.Stderr. It is used to
+// replace readline.Stdout, that is the package used by promptui to display the
+// prompts.
+//
+// This is a workaround for the bell issue documented in
+// https://github.com/manifoldco/promptui/issues/49.
+type bellSkipper struct{}
 
 // Write implements an io.WriterCloser over os.Stderr, but it skips the terminal
 // bell character.
-func (s *stderr) Write(b []byte) (int, error) {
-	if len(b) == 1 && b[0] == readline.CharBell {
+func (bs *bellSkipper) Write(b []byte) (int, error) {
+	const charBell = 7 // c.f. readline.CharBell
+	if len(b) == 1 && b[0] == charBell {
 		return 0, nil
 	}
 	return os.Stderr.Write(b)
 }
 
 // Close implements an io.WriterCloser over os.Stderr.
-func (s *stderr) Close() error {
+func (bs *bellSkipper) Close() error {
 	return os.Stderr.Close()
-}
-
-func init() {
-	readline.Stdout = &stderr{}
 }
