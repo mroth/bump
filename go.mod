@@ -7,6 +7,6 @@ require (
 	github.com/google/go-github/v28 v28.1.1
 	github.com/manifoldco/promptui v0.7.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
-	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a
+	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/src-d/go-git.v4 v4.13.1
 )
