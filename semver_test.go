@@ -2,7 +2,30 @@ package main
 
 import (
 	"testing"
+
+	"github.com/Masterminds/semver/v3"
 )
+
+func TestType(t *testing.T) {
+	tests := []struct {
+		verStr string
+		want   VersionType
+	}{
+		{"1.2.3", Patch},
+		{"1.2.0", Minor},
+		{"1.0.0", Major},
+		{"0.0.1", Patch},
+		{"1.2.3-rc.1", PrePatch},
+		{"1.2.0-foo", PreMinor},
+		{"2.0.0-dev1", PreMajor},
+	}
+	for _, tt := range tests {
+		v := semver.MustParse(tt.verStr)
+		if got := Type(*v); got != tt.want {
+			t.Errorf("Version.Type(%v) = %v, want %v", tt.verStr, got, tt.want)
+		}
+	}
+}
 
 func Test_parsePreStr(t *testing.T) {
 	tests := []struct {
