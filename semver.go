@@ -21,10 +21,17 @@ import (
 
 var (
 	// InitialPrereleasePrefix is the prefix that will utilized for initial
-	// prerelease versions when there is no previous prerelease to base it off
-	// of.
+	// prerelease versions when there is no previous prerelease to base it off.
 	InitialPrereleasePrefix = "rc."
+	// InitialPrereleaseNumber is the numeric value that will be utilized for
+	// initial prerelease versions when there is no previous prerelease to base
+	// it off.
+	InitialPrereleaseNumber uint = 1
 )
+
+func initialPrereleaseString() string {
+	return fmt.Sprintf("%s%d", InitialPrereleasePrefix, InitialPrereleaseNumber)
+}
 
 type VersionType int8
 
@@ -90,24 +97,33 @@ func Type(v semver.Version) VersionType {
 //
 // For an existing pre-release version, this should be the incremented prelease
 // version, and the following version.
-func SuggestNext(v semver.Version) semver.Collection {
+func SuggestNext(v semver.Version, initialPrereleases bool) (semver.Collection, error) {
 	if HasValidPrerelease(v) {
 		nextPre, _ := IncPrerelease(v) // safety: can't err due to guard
 		final := Finalize(v)
-		return semver.Collection{&nextPre, &final}
+		return semver.Collection{&nextPre, &final}, nil
 	}
 
-	patch := v.IncPatch()
-	minor := v.IncMinor()
-	major := v.IncMajor()
-	return semver.Collection{
-		&patch,
-		&minor,
-		&major,
-		// TODO: PrePatch
-		// TODO: PreMinor
-		// TODO: PreMajor
+	patch, minor, major := v.IncPatch(), v.IncMinor(), v.IncMajor()
+	suggestions := semver.Collection{&patch, &minor, &major}
+	if !initialPrereleases {
+		return suggestions, nil
 	}
+
+	preStr := initialPrereleaseString()
+	prepatch, err := patch.SetPrerelease(preStr)
+	if err != nil {
+		return suggestions, err
+	}
+	// Safety: the potential error above on Setprerelease comes only from a
+	// malformed prerelease string (which *is* possible if the user modified
+	// InitialPrereleasePrefix to something weird), but since this string is
+	// constant for all pre version we do here, we can omit the errcheck on next
+	// two sets for brevity.
+	preminor, _ := minor.SetPrerelease(preStr)
+	premajor, _ := major.SetPrerelease(preStr)
+	suggestions = append(suggestions, &prepatch, &preminor, &premajor)
+	return suggestions, nil
 }
 
 // HasPrerelease returns whether or not a version has a prerelease version
@@ -123,7 +139,7 @@ func HasPrerelease(v semver.Version) bool {
 // component which conforms to the standardized format used by bump.
 func HasValidPrerelease(v semver.Version) bool {
 	_, _, err := parsePreStr(v.Prerelease())
-	return err != nil
+	return err == nil
 }
 
 // IncPrerelease returns an incremented prerelease Version from a Version that

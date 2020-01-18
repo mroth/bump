@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
@@ -24,6 +25,73 @@ func TestType(t *testing.T) {
 		if got := Type(*v); got != tt.want {
 			t.Errorf("Version.Type(%v) = %v, want %v", tt.verStr, got, tt.want)
 		}
+	}
+}
+
+func TestSuggestNext(t *testing.T) {
+	type args struct {
+		v                  semver.Version
+		initialPrereleases bool
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    semver.Collection
+		wantErr bool
+	}{
+		{
+			name: "typical",
+			args: args{
+				v:                  *semver.MustParse("1.2.3"),
+				initialPrereleases: false,
+			},
+			want: semver.Collection{
+				semver.MustParse("1.2.4"),
+				semver.MustParse("1.3.0"),
+				semver.MustParse("2.0.0"),
+			},
+			wantErr: false,
+		},
+		{
+			name: "include initial prereleases",
+			args: args{
+				v:                  *semver.MustParse("1.2.3"),
+				initialPrereleases: true,
+			},
+			want: semver.Collection{
+				semver.MustParse("1.2.4"),
+				semver.MustParse("1.3.0"),
+				semver.MustParse("2.0.0"),
+				semver.MustParse("1.2.4-rc.1"),
+				semver.MustParse("1.3.0-rc.1"),
+				semver.MustParse("2.0.0-rc.1"),
+			},
+			wantErr: false,
+		},
+		{
+			name: "existing prerelease",
+			args: args{
+				v: *semver.MustParse("1.3.0-rc.2"),
+			},
+			want: semver.Collection{
+				semver.MustParse("1.3.0-rc.3"),
+				semver.MustParse("1.3.0"),
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := SuggestNext(tt.args.v, tt.args.initialPrereleases)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("SuggestNext(%v) error = %v, wantErr %v", tt.args.v, err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SuggestNext(%v) = %v, want %v", tt.args.v, got, tt.want)
+			}
+		})
 	}
 }
 
