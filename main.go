@@ -127,10 +127,10 @@ func main() {
 // given owner/repo with a semver compatible tag based on the semver.Version in
 // the tag and title fields, and an encoded body payload to prepopulate the
 // form.
-func draftReleaseURL(owner, repo string, version *semver.Version, body string) string {
+func draftReleaseURL(owner, repo string, v *semver.Version, body string) string {
 	return fmt.Sprintf(
-		"https://github.com/%s/%s/releases/new?tag=v%s&title=v%s&body=%s",
-		owner, repo, version.String(), version.String(), url.QueryEscape(body),
+		"https://github.com/%s/%s/releases/new?tag=v%s&prerelease=%t&title=v%s&body=%s",
+		owner, repo, v.String(), HasPrerelease(*v), v.String(), url.QueryEscape(body),
 	)
 }
 
