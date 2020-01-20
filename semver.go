@@ -64,6 +64,26 @@ func (vt VersionType) String() string {
 	}
 }
 
+// Description returns a short sentence describing the VersionType.
+func (vt VersionType) Description() string {
+	switch vt {
+	case Patch:
+		return "when you make backwards-compatible bug fixes"
+	case Minor:
+		return "when you add functionality in a backwards-compatible manner"
+	case Major:
+		return "when you make incompatible API changes"
+	case PrePatch:
+		return "when you make backwards-compatible bug fixes [PRE-RELEASE]"
+	case PreMinor:
+		return "when you add functionality in a backwards-compatible manner [PRE-RELEASE]"
+	case PreMajor:
+		return "when you make incompatible API changes [PRE-RELEASE]"
+	default:
+		return vt.String()
+	}
+}
+
 // standard errors provided by this file
 var (
 	ErrNotPrerelease     = errors.New("Version does not contain prerelease component")

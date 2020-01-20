@@ -91,8 +91,14 @@ func main() {
 	changelog := screenChangelog(comparison)
 	fmt.Println(changelog)
 
+	// determine reasonable suggestions for next version
+	nextVersionChoices, err := SuggestNext(*previousVersion, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// invoke interactive prompt UI allowing user to select next version
-	nextVersion, err := prompt(previousVersion)
+	nextVersion, err := prompt(nextVersionChoices)
 	if err != nil {
 		log.Fatal(err)
 	}
