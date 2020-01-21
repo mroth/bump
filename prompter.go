@@ -44,6 +44,7 @@ func prompt(possibilities semver.Collection) (*semver.Version, error) {
 	prompt := promptui.Select{
 		Label: "Select semver increment to specify next version",
 		Items: choices,
+		Size:  3,
 		Templates: &promptui.SelectTemplates{
 			Details: `{{ .Name }}: {{ .Description }}.`,
 		},
