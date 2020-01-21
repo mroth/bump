@@ -63,36 +63,55 @@ func main() {
 		logVerbose("detected .git repo with github remote %v/%v", owner, repo)
 	}
 
-	// get latest release version from github
-	logVerbose("checking github for latest release of %v/%v", owner, repo)
-	previousRelease, err := getLatestRelease(owner, repo)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// DEPRECATED: get latest release version from github
+	// logVerbose("Querying GitHub for latest release of %v/%v", owner, repo)
+	// previousRelease, err := getLatestRelease(owner, repo)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	// try to parse tag name from current release into a semantic version
-	previousVersion, err := semver.NewVersion(previousRelease.GetTagName())
+	// DEPRECATED: try to parse tag name from current release into a semantic version
+	// _, err = semver.NewVersion(previousRelease.GetTagName())
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// get recent releases from GH
+	logVerbose("Querying GitHub for latest releases of %v/%v", owner, repo)
+	rr, err := getRecentReleases(owner, repo)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("🌻 Latest release of %v (published %v)\n",
-		boldStyler(fmt.Sprintf("%v/%v: %v", owner, repo, previousVersion)),
-		previousRelease.GetPublishedAt().Format("2006 Jan 2"),
-	)
 
 	// retrieve changes since last release via GitHub API
-	comparison, err := compareRelease(owner, repo, previousRelease.GetTagName())
+	logVerbose("Querying GitHub for list of commits between HEAD and %v", rr.Full.GetTagName())
+	comparison, err := compareRelease(owner, repo, rr.Full.GetTagName())
 	if err != nil {
 		log.Fatal("failed to retrieve commits", err)
 	}
 
-	// display abbreviated changelog to user in CLI, to hopefully aide them in
+	// Print header, which should reference the most recent Full release.
+	fmt.Printf("🌻 Latest release of %v (published %v)\n",
+		boldStyler(fmt.Sprintf("%v/%v: %v", owner, repo, rr.Full.GetTagName())),
+		rr.Full.GetPublishedAt().Format("2006 Jan 2"),
+	)
+
+	// Display abbreviated changelog to user in CLI, to hopefully aide them in
 	// making a decision about what the next semver should be.
+	//
+	// This should also reference the most recent Full release, as just knowing
+	// the incremental changes when working on a prerelease likely is less
+	// beneficial to aide in a decision than seeing what the final changelog
+	// would be like.
 	changelog := screenChangelog(comparison)
 	fmt.Println(changelog)
 
-	// determine reasonable suggestions for next version
-	nextVersionChoices, err := SuggestNext(*previousVersion, true)
+	// Determine reasonable suggestions for next semantic version.
+	latestVersion, err := semver.NewVersion(rr.Latest.GetTagName())
+	if err != nil {
+		log.Fatal(err)
+	}
+	nextVersionChoices, err := SuggestNext(*latestVersion, true)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,7 +125,7 @@ func main() {
 	// create draft URL embedding markdown changelog for next version...
 	body := strings.Join([]string{
 		markdownChangelog(comparison),
-		comparisonURL(owner, repo, previousVersion, nextVersion),
+		comparisonURL(owner, repo, latestVersion, nextVersion),
 	}, "\n")
 	draftURL := draftReleaseURL(owner, repo, nextVersion, body)
 
