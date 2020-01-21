@@ -83,6 +83,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// gracefully handle fatal edge case of no previous releases
+	if rr.Latest == nil {
+		fmt.Fprintf(os.Stderr,
+			"No previous releases for %s/%s found.\n\n", owner, repo)
+		fmt.Fprintln(os.Stderr,
+			"You must be using GitHub Releases, not just naked git tags.")
+		os.Exit(1)
+	}
+
 	// retrieve changes since last release via GitHub API
 	logVerbose("Querying GitHub for list of commits between HEAD and %v", rr.Full.GetTagName())
 	comparison, err := compareRelease(owner, repo, rr.Full.GetTagName())
