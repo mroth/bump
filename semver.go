@@ -110,13 +110,17 @@ func Type(v semver.Version) VersionType {
 	}
 }
 
-// SuggestNext will return reasonable suggestions for a Version that would
-// come after the current Version.
+// SuggestNext will return reasonable suggestions for a Version that would come
+// after the current Version.
 //
-// For a typical release version, ***
+// For a typical release version, incremented Major, Minor, and Patch release
+// Versions will be returned.  If the initiaPrereleases parameter is set to
+// true, then those will additionally be combined with the initialPreleaseString
+// for another set of Versions in PreMajor, PreMinor, and PrePatch variants.
 //
 // For an existing pre-release version, this should be the incremented prelease
-// version, and the following version.
+// version, and the following version. The initialPrereleases parameter will
+// have no effect in this situation.
 func SuggestNext(v semver.Version, initialPrereleases bool) (semver.Collection, error) {
 	if HasValidPrerelease(v) {
 		nextPre, _ := IncPrerelease(v) // safety: can't err due to guard
