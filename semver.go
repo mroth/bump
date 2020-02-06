@@ -20,18 +20,10 @@ import (
 )
 
 var (
-	// InitialPrereleasePrefix is the prefix that will utilized for initial
-	// prerelease versions when there is no previous prerelease to base it off.
-	InitialPrereleasePrefix = "rc."
-	// InitialPrereleaseNumber is the numeric value that will be utilized for
-	// initial prerelease versions when there is no previous prerelease to base
-	// it off.
-	InitialPrereleaseNumber uint = 1
+	// InitialPrerelease is the value that will utilized for initial prerelease
+	// versions when there is no previous prerelease to base it off.
+	InitialPrerelease = "rc.1"
 )
-
-func initialPrereleaseString() string {
-	return fmt.Sprintf("%s%d", InitialPrereleasePrefix, InitialPrereleaseNumber)
-}
 
 type VersionType int8
 
@@ -134,7 +126,7 @@ func SuggestNext(v semver.Version, initialPrereleases bool) (semver.Collection, 
 		return suggestions, nil
 	}
 
-	preStr := initialPrereleaseString()
+	preStr := InitialPrerelease
 	prepatch, err := patch.SetPrerelease(preStr)
 	if err != nil {
 		return suggestions, err

@@ -7,13 +7,14 @@ import (
 	"strings"
 )
 
-const usageText = `Usage: bump <owner> <repo>
+var usageText = fmt.Sprintf(`Usage: bump <owner> <repo>
 
 If you are in a git repository that has been cloned from GitHub, owner and
 repo args can be omitted, in which case they will be inferred from the remote
 origin.
 
 Flags:
+    --pre <SUFFIX>      Use <SUFFIX> as initial prelease value (default "%s")
     --no-open           Do not automatically open publish URL in browser.
     --verbose, -v       Verbose output.
     --version           Print version and exit.
@@ -23,7 +24,7 @@ Environment:
     $BUMP_NO_OPEN       Global default for --no-open
     $BUMP_VERBOSE       Global default for --verbose
     $GITHUB_TOKEN       Optional, will use if present to access private repos
-`
+`, InitialPrerelease)
 
 func usage() {
 	fmt.Fprintf(os.Stderr, usageText)
@@ -82,6 +83,12 @@ func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 	flags.BoolVar(&newOpts.NoOpen, "no-open", opts.NoOpen, "")
 	flags.BoolVar(&newOpts.Verbose, "verbose", opts.Verbose, "")
 	flags.BoolVar(&newOpts.Verbose, "v", opts.Verbose, "")
+
+	// NOTE: InitialPrerelease is kept as a package level variable instead of in
+	// our CLI Options struct for now, since I am probably going to extract all
+	// the prever functionality into a self contained package.
+	flags.StringVar(&InitialPrerelease, "pre", InitialPrerelease, "")
+
 	version := flags.Bool("version", false, "")
 	flags.Usage = usage
 
