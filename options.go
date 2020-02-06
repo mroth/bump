@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/mroth/bump/internal/presemver"
 )
 
 var usageText = fmt.Sprintf(`Usage: bump <owner> <repo>
@@ -24,7 +26,7 @@ Environment:
     $BUMP_NO_OPEN       Global default for --no-open
     $BUMP_VERBOSE       Global default for --verbose
     $GITHUB_TOKEN       Optional, will use if present to access private repos
-`, InitialPrerelease)
+`, presemver.InitialPrerelease)
 
 func usage() {
 	fmt.Fprintf(os.Stderr, usageText)
@@ -87,7 +89,7 @@ func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 	// NOTE: InitialPrerelease is kept as a package level variable instead of in
 	// our CLI Options struct for now, since I am probably going to extract all
 	// the prever functionality into a self contained package.
-	flags.StringVar(&InitialPrerelease, "pre", InitialPrerelease, "")
+	flags.StringVar(&presemver.InitialPrerelease, "pre", presemver.InitialPrerelease, "")
 
 	version := flags.Bool("version", false, "")
 	flags.Usage = usage

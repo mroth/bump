@@ -1,14 +1,15 @@
-// Additional functions for working with github.com.Masterminds/semver/v3 in
-// order to provide some rudimentary support for bumping pre-release versions
-// that follow a specific pattern, and semi-intelligent suggestion of what
-// possible versions would come next, taking into account prereleases.
+// Package presemver provides additional functions for working with
+// github.com/Masterminds/semver/v3 in order to add rudimentary support for
+// bumping pre-release versions that follow a specific pattern, and
+// semi-intelligent suggestion of what possible versions would come next, taking
+// into account prereleases.
 //
-// Originally, I planned to wrap "Masterminds/semver/v3".Version entirely, but
-// that results in enough boilerplate code that this is simpler, even if
-// slightly less ergonomic as an API iuser.  In the future, consider whether any
-// of this can be generalized enough to be upstreamed into a PR for semver
-// itself.
-package main
+// Originally, I planned to wrap "github.com/Masterminds/semver/v3".Version
+// entirely, but that results in enough boilerplate code that this is simpler,
+// even if slightly less ergonomic as an API iuser.  In the future, consider
+// whether any of this can be generalized enough to be upstreamed into a PR for
+// semver itself.
+package presemver
 
 import (
 	"errors"
@@ -25,6 +26,9 @@ var (
 	InitialPrerelease = "rc.1"
 )
 
+// VersionType is an enum representing the different "types" of release of a
+// semantic version. E.g. a major release, patch release, pre-minor release,
+// etc.
 type VersionType int8
 
 // Possible VersionType values
@@ -76,7 +80,7 @@ func (vt VersionType) Description() string {
 	}
 }
 
-// standard errors provided by this file
+// standard errors provided by this package
 var (
 	ErrNotPrerelease     = errors.New("Version does not contain prerelease component")
 	ErrInvalidPrerelease = errors.New("Prelease string did not conform to supported format")

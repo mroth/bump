@@ -6,6 +6,8 @@ import (
 	"sort"
 	"time"
 
+	"github.com/mroth/bump/internal/presemver"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/v29/github"
 	"golang.org/x/oauth2"
@@ -70,7 +72,7 @@ func extractRecentReleases(rs []*github.RepositoryRelease) recentReleases {
 	// data here, since people manually maintaining releases often dont bother
 	// to check the prerelease toggle.
 	for _, v := range col {
-		if !HasPrerelease(*v) {
+		if !presemver.HasPrerelease(*v) {
 			res.Full = releaseMap[v]
 			break
 		}

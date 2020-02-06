@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/mroth/bump/internal/presemver"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/manifoldco/promptui"
 )
@@ -35,7 +37,7 @@ func prompt(possibilities semver.Collection) (*semver.Version, error) {
 	// can be refactored/simplified in the future.
 	var choices []cliVersionOption
 	for _, c := range possibilities {
-		verType := Type(*c)
+		verType := presemver.Type(*c)
 		choices = append(choices, cliVersionOption{
 			strings.ToLower(verType.String()), c, verType.Description(),
 		})

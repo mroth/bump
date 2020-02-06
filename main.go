@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mroth/bump/internal/presemver"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/v29/github"
 	"github.com/pkg/browser"
@@ -120,7 +122,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	nextVersionChoices, err := SuggestNext(*latestVersion, true)
+	nextVersionChoices, err := presemver.SuggestNext(*latestVersion, true)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -158,7 +160,7 @@ func main() {
 func draftReleaseURL(owner, repo string, v *semver.Version, body string) string {
 	return fmt.Sprintf(
 		"https://github.com/%s/%s/releases/new?tag=v%s&prerelease=%t&title=v%s&body=%s",
-		owner, repo, v.String(), HasPrerelease(*v), v.String(), url.QueryEscape(body),
+		owner, repo, v.String(), presemver.HasPrerelease(*v), v.String(), url.QueryEscape(body),
 	)
 }
 
