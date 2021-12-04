@@ -25,13 +25,14 @@ checksum:
   name_template: 'checksums.txt'
 snapshot:
   name_template: "{{ .Tag }}-next"
-brew:
-  github:
-    owner: mroth
-    name: homebrew-formulas
-  description: "Draft GitHub Release of the next semver in web browser"
-  homepage: "https://github.com/mroth/bump"
-  skip_upload: false
+brews:
+  -
+    tap:
+      owner: mroth
+      name: homebrew-tap
+    description: "Draft GitHub Release of the next semver in web browser"
+    homepage: "https://github.com/mroth/bump"
+    skip_upload: false
 # disable changelog generation entirely, since bump will manage that itself!
 changelog:
   skip: true
