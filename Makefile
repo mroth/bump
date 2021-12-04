@@ -13,7 +13,7 @@ snapshot:
 
 package:
 	# never want to actually publish from local, thats what CI is for
-	goreleaser release --rm-dist --no-publish
+	goreleaser release --rm-dist --skip-publish
 
 clean:
 	rm -rf bin
