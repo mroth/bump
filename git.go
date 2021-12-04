@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"time"
 
-	"gopkg.in/src-d/go-git.v4"
+	"github.com/go-git/go-git/v5"
 )
 
 // githubRepoDetect attempts to detect whether a given path is part of a git
@@ -57,6 +57,9 @@ func _detectRemoteURL_GoGit(path string) (string, error) {
 // os/exec adds 242KB to macOS binary size
 // bytes adds 218kb
 // benchmarks at 5.1 ms/op
+//
+// NOTE: not currently used at all, was only here for benchmarking purposes.
+// FIXME: Does not respect path (known issue, would need address if using this in future).
 func _detectRemoteURL_LocalGit(path string) (string, error) {
 	cmd := exec.Command("git", "config", "--get", "remote.origin.url")
 	output, err := cmd.Output()
