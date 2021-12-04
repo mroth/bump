@@ -54,7 +54,7 @@ fetch` to pull all remote tags to your system. :eyes:
 Download from the [Releases page](https://github.com/mroth/bump/releases) and
 put somewhere in your `$PATH`.
 
-macOS Homebrew users can `brew install mroth/formulas/bump`.
+Homebrew users can `brew install mroth/tap/bump`.
 
 ## Comparison
 
