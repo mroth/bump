@@ -85,9 +85,3 @@ alternatives:
 [sindresorhus/np]: https://github.com/sindresorhus/np
 [goreleaser]: https://goreleaser.com
 [zeit/release]: https://github.com/zeit/release
-
-## TODOs
-
-- Verify if need a no-emoji option for Linux users?
-- Possibly add support for semver pre-release increments? Maybe standardize node
-  style via examples on https://github.com/rtsao/npm-publish-prerelease
