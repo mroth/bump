@@ -10,6 +10,7 @@ builds:
     - windows
   goarch:
     - amd64
+    - arm64
   # Custom ldflags templates.
   # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}`.
   ldflags:
@@ -17,7 +18,6 @@ builds:
 archives:
 - replacements:
     darwin: mac
-    amd64: x64
   format_overrides:
   - goos: windows
     format: zip
