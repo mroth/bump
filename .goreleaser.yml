@@ -17,10 +17,12 @@ builds:
      - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}
 archives:
 - replacements:
-    darwin: mac
+    darwin: macOS
   format_overrides:
   - goos: windows
     format: zip
+universal_binaries:
+- replace: true
 checksum:
   name_template: 'checksums.txt'
 snapshot:
