@@ -8,7 +8,7 @@ require (
 	github.com/google/go-github/v29 v29.0.2
 	github.com/manifoldco/promptui v0.7.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
-	golang.org/x/oauth2 v0.5.0
+	golang.org/x/oauth2 v0.6.0
 )
 
 require (
@@ -32,8 +32,8 @@ require (
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/net v0.6.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
