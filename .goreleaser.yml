@@ -16,9 +16,7 @@ builds:
   ldflags:
      - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}
 archives:
-- replacements:
-    darwin: macOS
-  format_overrides:
+- format_overrides:
   - goos: windows
     format: zip
 universal_binaries:
@@ -29,7 +27,7 @@ snapshot:
   name_template: "{{ .Tag }}-next"
 brews:
   -
-    tap:
+    repository:
       owner: mroth
       name: homebrew-tap
     description: "Draft GitHub Release of the next semver in web browser"

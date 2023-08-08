@@ -9,11 +9,11 @@ bin:
 	mkdir -p bin
 
 snapshot:
-	goreleaser release --rm-dist --snapshot
+	goreleaser release --clean --snapshot
 
 package:
 	# never want to actually publish from local, thats what CI is for
-	goreleaser release --rm-dist --skip-publish
+	goreleaser release --clean --skip-publish
 
 clean:
 	rm -rf bin
