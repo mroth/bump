@@ -2,7 +2,7 @@
 # you probably don't want to be using it otherwise.
 NAME=bump
 
-bin/$(NAME): *.go bin
+bin/$(NAME): *.go go.mod go.sum bin
 	go build -o $@
 
 bin:
