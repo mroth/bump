@@ -3,7 +3,7 @@ module github.com/mroth/bump
 go 1.20
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v29 v29.0.3
 	github.com/manifoldco/promptui v0.9.0
