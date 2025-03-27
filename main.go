@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mroth/bump/internal/presemver"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/v29/github"
 	"github.com/pkg/browser"
@@ -63,36 +65,70 @@ func main() {
 		logVerbose("detected .git repo with github remote %v/%v", owner, repo)
 	}
 
-	// get latest release version from github
-	logVerbose("checking github for latest release of %v/%v", owner, repo)
-	previousRelease, err := getLatestRelease(owner, repo)
+	// DEPRECATED: get latest release version from github
+	// logVerbose("Querying GitHub for latest release of %v/%v", owner, repo)
+	// previousRelease, err := getLatestRelease(owner, repo)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// DEPRECATED: try to parse tag name from current release into a semantic version
+	// _, err = semver.NewVersion(previousRelease.GetTagName())
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// get recent releases from GH
+	logVerbose("Querying GitHub for latest releases of %v/%v", owner, repo)
+	rr, err := getRecentReleases(owner, repo)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// try to parse tag name from current release into a semantic version
-	previousVersion, err := semver.NewVersion(previousRelease.GetTagName())
-	if err != nil {
-		log.Fatal(err)
+	// gracefully handle fatal edge case of no previous releases
+	if rr.Latest == nil {
+		fmt.Fprintf(os.Stderr,
+			"No previous releases for %s/%s found.\n\n", owner, repo)
+		fmt.Fprintln(os.Stderr,
+			"You must be using GitHub Releases, not just naked git tags.")
+		os.Exit(1)
 	}
-	fmt.Printf("🌻 Latest release of %v (published %v)\n",
-		boldStyler(fmt.Sprintf("%v/%v: %v", owner, repo, previousVersion)),
-		previousRelease.GetPublishedAt().Format("2006 Jan 2"),
-	)
 
 	// retrieve changes since last release via GitHub API
-	comparison, err := compareRelease(owner, repo, previousRelease.GetTagName())
+	logVerbose("Querying GitHub for list of commits between HEAD and %v", rr.Full.GetTagName())
+	comparison, err := compareRelease(owner, repo, rr.Full.GetTagName())
 	if err != nil {
 		log.Fatal("failed to retrieve commits", err)
 	}
 
-	// display abbreviated changelog to user in CLI, to hopefully aide them in
+	// Print header, which should reference the most recent Full release.
+	fmt.Printf("🌻 Latest release of %v (published %v)\n",
+		boldStyler(fmt.Sprintf("%v/%v: %v", owner, repo, rr.Full.GetTagName())),
+		rr.Full.GetPublishedAt().Format("2006 Jan 2"),
+	)
+
+	// Display abbreviated changelog to user in CLI, to hopefully aide them in
 	// making a decision about what the next semver should be.
+	//
+	// This should also reference the most recent Full release, as just knowing
+	// the incremental changes when working on a prerelease likely is less
+	// beneficial to aide in a decision than seeing what the final changelog
+	// would be like.
 	changelog := screenChangelog(comparison)
 	fmt.Println(changelog)
 
+	// Determine reasonable suggestions for next semantic version.
+	latestVersion, err := semver.NewVersion(rr.Latest.GetTagName())
+	if err != nil {
+		log.Fatal(err)
+	}
+	nextVersionChoices, err := presemver.SuggestNext(*latestVersion, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// invoke interactive prompt UI allowing user to select next version
-	nextVersion, err := prompt(previousVersion)
+	nextVersion, err := prompt(nextVersionChoices)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -100,7 +136,7 @@ func main() {
 	// create draft URL embedding markdown changelog for next version...
 	body := strings.Join([]string{
 		markdownChangelog(comparison),
-		comparisonURL(owner, repo, previousVersion, nextVersion),
+		comparisonURL(owner, repo, latestVersion, nextVersion),
 	}, "\n")
 	draftURL := draftReleaseURL(owner, repo, nextVersion, body)
 
@@ -121,10 +157,10 @@ func main() {
 // given owner/repo with a semver compatible tag based on the semver.Version in
 // the tag and title fields, and an encoded body payload to prepopulate the
 // form.
-func draftReleaseURL(owner, repo string, version *semver.Version, body string) string {
+func draftReleaseURL(owner, repo string, v *semver.Version, body string) string {
 	return fmt.Sprintf(
-		"https://github.com/%s/%s/releases/new?tag=v%s&title=v%s&body=%s",
-		owner, repo, version.String(), version.String(), url.QueryEscape(body),
+		"https://github.com/%s/%s/releases/new?tag=v%s&prerelease=%t&title=v%s&body=%s",
+		owner, repo, v.String(), presemver.HasPrerelease(*v), v.String(), url.QueryEscape(body),
 	)
 }
 
