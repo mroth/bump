@@ -1,3 +1,5 @@
+version: 2
+
 before:
   hooks:
     - go mod download
@@ -18,13 +20,13 @@ builds:
 archives:
 - format_overrides:
   - goos: windows
-    format: zip
+    formats: [ 'zip' ]
 universal_binaries:
 - replace: true
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
 brews:
   -
     repository:
@@ -35,4 +37,4 @@ brews:
     skip_upload: false
 # disable changelog generation entirely, since bump will manage that itself!
 changelog:
-  skip: true
+  disable: true
