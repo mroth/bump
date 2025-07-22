@@ -1,0 +1,14 @@
+Changes since previous release:
+
+  - feat: add new user authentication system
+  - fix: resolve memory leak in background worker
+  - docs: update API documentation
+  - test: add comprehensive unit tests for auth module
+  - refactor: simplify database connection pooling
+  - feat: implement rate limiting middleware
+  - fix: handle edge case in date parsing
+  - chore: update dependencies to latest versions
+  - perf: optimize database queries for user lookup
+  - feat: add webhook support for external integrations
+
+...2 more commits, https://github.com/owner/repo/compare/v1.0.0...v1.1.0
