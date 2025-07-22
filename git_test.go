@@ -33,7 +33,6 @@ func Test_parseGithubRemote(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt // pin to avoid scope issues (see scopelint)
 		t.Run(tt.name, func(t *testing.T) {
 			gotOwner, gotRepo, gotOk := parseGithubRemote(tt.remoteURL)
 			if gotOwner != tt.wantOwner {
@@ -62,19 +61,19 @@ func Test_githubRepoDetect(t *testing.T) {
 }
 
 func Benchmark_detectRemoteURL_GoGit(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_detectRemoteURL_GoGit(".")
 	}
 }
 
 func Benchmark_detectRemoteURL_LocalGit(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_detectRemoteURL_LocalGit(".")
 	}
 }
 
 func Benchmark_parseGithubRemote(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		parseGithubRemote("https://github.com/mroth/bump.git")
 	}
 }

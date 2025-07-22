@@ -1,40 +1,53 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
 version: 2
 
 before:
   hooks:
     - go mod download
+
 builds:
-- env:
-    - CGO_ENABLED=0
-  goos:
-    - linux
-    - darwin
-    - windows
-  goarch:
-    - amd64
-    - arm64
-  # Custom ldflags templates.
-  # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}`.
-  ldflags:
-     - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}
-archives:
-- format_overrides:
-  - goos: windows
-    formats: [ 'zip' ]
-universal_binaries:
-- replace: true
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}
+
+gomod:
+  # Proxy a module from proxy.golang.org, making the builds verifiable.
+  # This will only be effective if running against a tag. Snapshots will ignore
+  # this setting.
+  # Notice: for this to work your `build.main` must be a package, not a `.go` file.
+  proxy: true
+
+# static file path for checksums for build attestations
 checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  version_template: "{{ .Tag }}-next"
+  name_template: "checksums.txt"
+
+archives:
+  - format_overrides:
+      - goos: windows
+        formats: ["zip"]
+
+# disable changelog generation entirely, since bump will manage that itself!
+changelog:
+  disable: true
+
+release:
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  prerelease: auto
+
 brews:
-  -
-    repository:
+  - repository:
       owner: mroth
       name: homebrew-tap
     description: "Draft GitHub Release of the next semver in web browser"
     homepage: "https://github.com/mroth/bump"
     skip_upload: false
-# disable changelog generation entirely, since bump will manage that itself!
-changelog:
-  disable: true
