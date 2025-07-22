@@ -85,7 +85,6 @@ func TestOptionsPrecedence(t *testing.T) {
 
 	originalEnv := os.Environ()
 	for _, tC := range testCases {
-		tC := tC // pin to avoid scope issues (see scopelint)
 		t.Run(tC.desc, func(t *testing.T) {
 			resetEnviron(tC.env)
 			actualOpts, _ := ParseFlags(NewOptionsFromEnv(), tC.args)

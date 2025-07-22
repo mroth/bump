@@ -24,7 +24,7 @@ var (
 // VerboseLogging sets whether to log debug/timing info to stderr
 var VerboseLogging = false
 
-func logVerbose(format string, v ...interface{}) {
+func logVerbose(format string, v ...any) {
 	if VerboseLogging {
 		log.Printf(format, v...)
 	}
