@@ -14,13 +14,6 @@ import (
 	"github.com/pkg/browser"
 )
 
-// build info set by goreleaser during production builds
-var (
-	buildVersion = "dev"
-	buildCommit  = "none"
-	buildDate    = "unknown"
-)
-
 // VerboseLogging sets whether to log debug/timing info to stderr
 var VerboseLogging = false
 

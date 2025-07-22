@@ -89,7 +89,7 @@ func ParseFlags(opts *Options, args []string) (Options, *flag.FlagSet) {
 	// (FlagSet.Parse returns "ErrHelp if -help or -h were set but not defined")
 	_ = flags.Parse(args)
 	if *version {
-		fmt.Println(buildVersion)
+		fmt.Println(Version())
 		os.Exit(0)
 	}
 
