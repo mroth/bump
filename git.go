@@ -79,7 +79,7 @@ func _detectRemoteURL_LocalGit(path string) (string, error) {
 func parseGithubRemote(remoteURL string) (owner, repo string, ok bool) {
 	re := regexp.MustCompile(`^(?:https://|git@)github.com[:/](.*)/(.*?)(?:\.git$|$)`)
 	matches := re.FindStringSubmatch(remoteURL)
-	if matches == nil || len(matches) < 3 {
+	if len(matches) < 3 {
 		return
 	}
 	return matches[1], matches[2], true
