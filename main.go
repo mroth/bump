@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"net/url"
@@ -10,7 +9,6 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/google/go-github/v29/github"
 	"github.com/pkg/browser"
 )
 
@@ -81,7 +79,7 @@ func main() {
 
 	// display abbreviated changelog to user in CLI, to hopefully aide them in
 	// making a decision about what the next semver should be.
-	changelog := screenChangelog(comparison)
+	changelog := RenderChangelogScreen(comparison)
 	fmt.Println(changelog)
 
 	// invoke interactive prompt UI allowing user to select next version
@@ -92,7 +90,7 @@ func main() {
 
 	// create draft URL embedding markdown changelog for next version...
 	body := strings.Join([]string{
-		markdownChangelog(comparison),
+		RenderChangelogMarkdown(comparison),
 		comparisonURL(owner, repo, previousVersion, nextVersion),
 	}, "\n")
 	draftURL := draftReleaseURL(owner, repo, nextVersion, body)
@@ -118,60 +116,5 @@ func draftReleaseURL(owner, repo string, version *semver.Version, body string) s
 	return fmt.Sprintf(
 		"https://github.com/%s/%s/releases/new?tag=v%s&title=v%s&body=%s",
 		owner, repo, version.String(), version.String(), url.QueryEscape(body),
-	)
-}
-
-// markdownChangelog formats a CommitsComparison suitable for displaying on the
-// screen to the user, abbreviated to try to not overflow a 80x24 terminal.
-//
-// Because of this, we only display the 10 most recent commits, with a
-// comparison URL targeting HEAD (as draft is not released), so user can view
-// the full list on GitHub if desired.
-func screenChangelog(comparison *github.CommitsComparison) string {
-	var buf bytes.Buffer
-	buf.WriteString("Changes since previous release:\n\n")
-	const max = 10
-	for i, c := range comparison.Commits {
-		if i >= max {
-			break
-		}
-		buf.WriteString(
-			fmt.Sprintf("  - %v\n",
-				strings.Split(c.Commit.GetMessage(), "\n")[0],
-			),
-		)
-	}
-	numExtraCommits := len(comparison.Commits) - max
-	if numExtraCommits > 0 {
-		buf.WriteString(
-			fmt.Sprintf("\n...%d more commits, %s\n",
-				numExtraCommits, comparison.GetHTMLURL()),
-		)
-	}
-	return buf.String()
-}
-
-// markdownChangelog formats a CommitsComparison suitable for markdown display
-// in a GitHub Flavored Markdown release notes field.
-//
-// TODO: cap max number of commits to display? API returns <=250
-func markdownChangelog(comparison *github.CommitsComparison) string {
-	var buf bytes.Buffer
-	buf.WriteString("## Changelog\n\n")
-	for _, c := range comparison.Commits {
-		buf.WriteString(
-			fmt.Sprintf("- %v %.7s\n",
-				strings.Split(c.Commit.GetMessage(), "\n")[0],
-				c.GetSHA(),
-			),
-		)
-	}
-	return buf.String()
-}
-
-// comparisonURL makes a GitHub web view URL for comparing two tagged semvers.
-func comparisonURL(owner, repo string, base, next *semver.Version) string {
-	return fmt.Sprintf(
-		"https://github.com/%s/%s/compare/v%s...v%s", owner, repo, base, next,
 	)
 }
