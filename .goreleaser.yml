@@ -4,7 +4,7 @@ version: 2
 
 before:
   hooks:
-    - go mod download
+    - go mod tidy
 
 builds:
   - env:
@@ -16,8 +16,10 @@ builds:
     goarch:
       - amd64
       - arm64
+    flags:
+      - -trimpath
     ldflags:
-      - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}
+      - -s -w -X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}} -X main.builtBy=goreleaser -X main.treeState={{ .IsGitDirty }}
 
 gomod:
   # Proxy a module from proxy.golang.org, making the builds verifiable.
@@ -33,7 +35,7 @@ checksum:
 archives:
   - format_overrides:
       - goos: windows
-        formats: ["zip"]
+        formats: [zip]
 
 # disable changelog generation entirely, since bump will manage that itself!
 changelog:
