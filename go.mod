@@ -3,7 +3,7 @@ module github.com/mroth/bump
 go 1.24
 
 require (
-	github.com/Masterminds/semver/v3 v3.3.1
+	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/earthboundkid/versioninfo/v2 v2.24.1
 	github.com/go-git/go-git/v5 v5.16.2
 	github.com/google/go-cmp v0.7.0
