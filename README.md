@@ -63,9 +63,9 @@ workflows where rather than pushing tags locally, new releases are primarily
 drafted via the Github Releases web interface (all the easier to drag your
 animated GIFs in, and whatnot.)
 
-This may not be the correct workflow for your project! In particular, it really
-works best in environments where there is not a version number file that stored
-in version control itself (Node NPM, Rust Cargo), but rather those where the git
+This may not be the correct workflow for your project! In particular, it
+works best in environments where there is not a version number file that is stored
+in version control itself (such as NPM, Cargo), but rather those where the git
 tags themselves manage the versioning (Go modules, sbt-git, etc.)
 
 Some related tools I found in looking at this you may wish to consider as
@@ -75,7 +75,7 @@ alternatives:
   all our JS native projects at @openlawteam, in conjunction with
   `--no-publish`.
 - [goreleaser] For Go projects, this tool is quite nice. In fact, it works well
-  in partnership with bump: let bump manage your releases and changelog, and but
+  in partnership with bump: let bump manage your releases and changelog, and have
   goreleaser running in CI to build and add the binaries to the release. (See
   the configuration for this project.)
 - [zeit/release] Fairly close to what we wanted, but it does a git tag/commit
