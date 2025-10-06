@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/earthboundkid/versioninfo/v2 v2.24.1
-	github.com/go-git/go-git/v5 v5.16.2
+	github.com/go-git/go-git/v5 v5.16.3
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-github/v29 v29.0.3
 	github.com/manifoldco/promptui v0.9.0
