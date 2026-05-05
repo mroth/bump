@@ -77,7 +77,7 @@ func _detectRemoteURL_LocalGit(path string) (string, error) {
 // 	 https://github.com/mroth/bump.git
 //   git@github.com:mroth/bump.git
 func parseGithubRemote(remoteURL string) (owner, repo string, ok bool) {
-	re := regexp.MustCompile(`^(?:https://|git@)github.com[:/](.*)/(.*?)(?:\.git$|$)`)
+	re := regexp.MustCompile(`^(?:https://|git@)github\.com[:/](.*)/(.*?)(?:\.git$|$)`)
 	matches := re.FindStringSubmatch(remoteURL)
 	if len(matches) < 3 {
 		return

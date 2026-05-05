@@ -31,6 +31,17 @@ func Test_parseGithubRemote(t *testing.T) {
 			wantRepo:  "bump",
 			wantOk:    true,
 		},
+		// negative cases: near-miss hostnames should not match
+		{
+			name:      "nearMiss_HTTPS_dotReplaced",
+			remoteURL: "https://githubXcom/mroth/bump.git",
+			wantOk:    false,
+		},
+		{
+			name:      "nearMiss_SSH_dotReplaced",
+			remoteURL: "git@githubXcom:mroth/bump.git",
+			wantOk:    false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
